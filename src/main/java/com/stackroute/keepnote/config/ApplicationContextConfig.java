@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -35,6 +36,7 @@ import com.stackroute.keepnote.model.User;
 @ComponentScan("com.stackroute.keepnote.*")
 @EnableWebMvc
 @EnableTransactionManagement
+@EnableAspectJAutoProxy
 public class ApplicationContextConfig {
 
 	/*
@@ -43,7 +45,6 @@ public class ApplicationContextConfig {
 	 * name 2. Database URL 3. UserName 4. Password
 	 */
 	@Bean
-	@Autowired
 	public DataSource getDateSource() {
 		BasicDataSource dataSource = new BasicDataSource();
 	
@@ -69,7 +70,6 @@ public class ApplicationContextConfig {
 	 * 2. Dialect 3. hbm2ddl
 	 */
 	@Bean
-	@Autowired
 	public LocalSessionFactoryBean getSessionFactory(DataSource dataSource) throws IOException {
 		LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
 		sessionFactoryBean.setDataSource(dataSource);
