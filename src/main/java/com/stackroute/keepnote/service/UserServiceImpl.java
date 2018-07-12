@@ -1,5 +1,9 @@
 package com.stackroute.keepnote.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.stackroute.keepnote.dao.UserDAO;
 import com.stackroute.keepnote.exception.UserAlreadyExistException;
 import com.stackroute.keepnote.exception.UserNotFoundException;
 import com.stackroute.keepnote.model.User;
@@ -13,7 +17,7 @@ import com.stackroute.keepnote.model.User;
 * better. Additionally, tool support and additional behavior might rely on it in the 
 * future.
 * */
-
+@Service
 public class UserServiceImpl implements UserService {
 
 	/*
@@ -25,10 +29,18 @@ public class UserServiceImpl implements UserService {
 	/*
 	 * This method should be used to save a new user.
 	 */
-
+	@Autowired
+	private UserDAO userDAO;
+	
+	public UserServiceImpl(UserDAO userDAO) {
+		this.userDAO = userDAO;
+	}
+	
 	public boolean registerUser(User user) throws UserAlreadyExistException {
-		return false;
-
+		if(userDAO.getUserById(user.getUserId())!=null)
+			throw new UserAlreadyExistException("User Already Exist Exception");
+		userDAO.registerUser(user);
+		return true;
 	}
 
 	/*
@@ -36,6 +48,11 @@ public class UserServiceImpl implements UserService {
 	 */
 
 	public User updateUser(User user, String userId) throws Exception {
+		userDAO.updateUser(user);
+		user = userDAO.getUserById(userId);
+		if(user==null) {
+			throw new Exception("java.lang.Exception");
+		}
 		return user;
 
 	}
@@ -45,7 +62,11 @@ public class UserServiceImpl implements UserService {
 	 */
 
 	public User getUserById(String UserId) throws UserNotFoundException {
-		return null;
+		User user = userDAO.getUserById(UserId);
+		if(user==null)
+			throw new UserNotFoundException("User Not Found Exception");
+		else
+			return user;
 
 	}
 
@@ -54,13 +75,16 @@ public class UserServiceImpl implements UserService {
 	 */
 
 	public boolean validateUser(String userId, String password) throws UserNotFoundException {
-		return false;
+		if(!userDAO.validateUser(userId, password))
+			throw new UserNotFoundException("User Not Found Exception");
+		else
+			return true;
 
 	}
 
 	/* This method should be used to delete an existing user. */
 	public boolean deleteUser(String UserId) {
-		return false;
+		return userDAO.deleteUser(UserId);
 
 	}
 
